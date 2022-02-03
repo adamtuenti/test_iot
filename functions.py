@@ -1,9 +1,8 @@
 import datetime
 
-
-def getEmployeesSchedule(fileName = 'schedule1.txt'):
-    if(fileName[-4:] != '.txt'):
-        fileName = fileName + '.txt'
+def getEmployeesSchedule(fileName = './files/schedule.txt'):
+    '''This function recive a file name and return a dictionary, where the keys are the name of the employee
+    and the value is another dictionary, key is the day and the value a tuple (entrance, out)'''
     file = open(fileName, 'r')
     dict_schedule = {}
     for line in file:
@@ -23,6 +22,7 @@ def getEmployeesSchedule(fileName = 'schedule1.txt'):
 
 
 def getMinutes(time):
+    '''This function recive a string hh:mm and return the total of minutes'''
     datem = datetime.datetime.strptime(time, "%H:%M")
     totalMinutes = datem.hour * 60 + datem.minute
     return totalMinutes
@@ -36,10 +36,9 @@ def getTimeIntersection(tuple1, tuple2):
     output2 = getMinutes(output2)
     cond1 = (input1 >= input2) and (output1 <= output2)
     cond2 = (input1 <= input2) and (output1 >= output2)
-    cond3 = (input1 >= input2) and (output1 >= output2)
-    cond4 = (input1 >= input2) and (output1 <= output2)
-    cond5 = (input1 <= input2) and (output1 <= output2)
-    total = cond1 + cond2 + cond3 + cond4 + cond5
+    cond3 = (input1 >= input2) and (output1 >= output2) and (output2 >= input1)
+    cond4 = (input1 <= input2) and (output1 <= output2) and (output1 >= input2)
+    total = cond1 + cond2 + cond3 + cond4
     return total
 
 
@@ -64,14 +63,16 @@ def getScheduleIntersection(scheduleDict):
                     if (numberIntersection > 0):
                         counter += 1
             if (counter > 0):
-                item = '{},{},{}\n'.format(employee1, employee2, str(counter))
+                item = '{};{};{}\n'.format(employee1, employee2, str(counter))
                 intersectionScheduleList.append(item)
     return intersectionScheduleList
 
 def writeEmployeeIntersectionTable(intersectionScheduleList):
-    file = open('scheduleIntersection.csv', 'w')
-    file.write('Employee 1,Employee 2,Counter\n')
+    file = open('./files/scheduleIntersection.csv', 'w')
+    file.write('Employee 1;Employee 2;Counter\n')
     for item in intersectionScheduleList:
+        if(item == intersectionScheduleList[-1]):
+            item = item[:-1]
         file.write(item)
     file.close()
     print('File created! scheduleIntersection.csv')
